@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugo完全ガイド - 初心者から上級者まで</title>
+    <meta name="description" content="Hugoの基本から高度な技術まで包括的に解説した完全ガイド。初心者にも分かりやすく、実践的なコード例とベストプラクティスを豊富に掲載。">
+    <style>
+        :root {
+            --primary-color: #007acc;
+            --secondary-color: #28a745;
+            --accent-color: #ffc107;
+            --text-color: #333;
+            --bg-color: #ffffff;
+            --sidebar-bg: #f8f9fa;
+            --border-color: #e9ecef;
+            --code-bg: #f8f9fa;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* サイドバー */
+        .sidebar {
+            width: 300px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-header p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .toc {
+            padding: 1rem;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc > ul > li {
+            margin-bottom: 0.5rem;
+        }
+
+        .toc a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .toc a:hover, .toc a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .toc ul ul {
+            margin-left: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .toc ul ul a {
+            font-size: 0.85rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        /* メインコンテンツ */
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            padding: 2rem;
+            max-width: calc(100% - 300px);
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .content-header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .content-header .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* セクション */
+        .section {
+            margin: 3rem 0;
+            scroll-margin-top: 2rem;
+        }
+
+        .section h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section h3 {
+            color: var(--secondary-color);
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .section h4 {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        /* コードブロック */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        code {
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9em;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* リスト */
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        /* テーブル */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            box-shadow: var(--shadow);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        /* アラート */
+        .alert {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #e7f3ff;
+            border-color: var(--primary-color);
+            color: #0c5460;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-color: var(--accent-color);
+            color: #856404;
+        }
+
+        .alert-success {
+            background: #d1f2eb;
+            border-color: var(--secondary-color);
+            color: #0f5132;
+        }
+
+        /* モバイル対応 */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                max-width: 100%;
+                padding: 1rem;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .content-header h1 {
+                font-size: 2rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* スクロールバー */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        /* アニメーション */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* バックトップ */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .back-to-top:hover {
+            background: #005a99;
+            transform: translateY(-2px);
+        }
+
+        .back-to-top.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <div class="container">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>📚 Hugo完全ガイド</h1>
+                <p>初心者から上級者まで</p>
+            </div>
+            <div class="toc">
+                <ul>
+                    <li><a href="#overview" onclick="scrollToSection('overview')">概要</a></li>
+                    <li><a href="#introduction" onclick="scrollToSection('introduction')">1. Hugoとは</a></li>
+                    <li><a href="#installation" onclick="scrollToSection('installation')">2. インストールと初期設定</a></li>
+                    <li><a href="#content" onclick="scrollToSection('content')">3. contentフォルダ詳細</a></li>
+                    <li><a href="#layouts" onclick="scrollToSection('layouts')">4. layoutsフォルダ詳細</a></li>
+                    <li><a href="#templates" onclick="scrollToSection('templates')">5. テンプレート入門</a></li>
+                    <li><a href="#frontmatter" onclick="scrollToSection('frontmatter')">6. フロントマター完全ガイド</a></li>
+                    <li><a href="#config" onclick="scrollToSection('config')">7. Hugo設定ファイル詳解</a></li>
+                    <li><a href="#themes" onclick="scrollToSection('themes')">8. テーマの使い方</a></li>
+                    <li><a href="#pipes" onclick="scrollToSection('pipes')">9. Hugo Pipesとアセット管理</a></li>
+                    <li><a href="#shortcodes" onclick="scrollToSection('shortcodes')">10. ショートコード活用術</a></li>
+                    <li><a href="#multilingual" onclick="scrollToSection('multilingual')">11. 多言語サイト構築</a></li>
+                    <li><a href="#seo" onclick="scrollToSection('seo')">12. SEO最適化</a></li>
+                    <li><a href="#deployment" onclick="scrollToSection('deployment')">13. デプロイとホスティング</a></li>
+                    <li><a href="#performance" onclick="scrollToSection('performance')">14. パフォーマンス最適化</a></li>
+                    <li><a href="#troubleshooting" onclick="scrollToSection('troubleshooting')">15. トラブルシューティング</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="content-header fade-in">
+                <h1>Hugo完全ガイド</h1>
+                <p class="subtitle">初心者から上級者まで - 包括的なHugo学習リソース</p>
+            </header>
+
+            <section id="overview" class="section fade-in">
+                <h2>📋 概要：Hugoのフォルダとファイル構成</h2>
+                
+                <h3>基本的なプロジェクト構造</h3>
+                <pre><code>my-hugo-site/
+├── archetypes/          # 新規コンテンツのテンプレート
+├── assets/              # 処理が必要なリソース（SCSS、JS等）
+├── content/             # サイトのメインコンテンツ（マークダウンファイル）
+├── data/                # 設定データファイル（JSON、YAML、TOML）
+├── layouts/             # HTMLテンプレート
+├── public/              # ビルド後の静的サイト（自動生成）
+├── static/              # 静的ファイル（画像、CSS、JSなど）
+├── themes/              # テーマファイル
+├── hugo.toml           # サイト設定ファイル
+└── go.mod              # Goモジュール設定（Hugo Modules使用時）</code></pre>
+
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>🚀 超高速ビルド</h3>
+                        <p>数千ページでも数秒でビルド完了。Go言語の恩恵を受けた高速処理。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🎨 豊富なテーマ</h3>
+                        <p>300以上の公式テーマと、柔軟なカスタマイズ機能。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🌍 多言語対応</h3>
+                        <p>複数言語サイトの構築が簡単。国際展開に最適。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>⚡ 高パフォーマンス</h3>
+                        <p>静的ファイル配信による高速表示とSEO最適化。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="introduction" class="section">
+                <h2>1. Hugoとは</h2>
+                
+                <h3>1.1 Hugoの概要</h3>
+                <p>HugoはGo言語で書かれた<strong>静的サイトジェネレーター</strong>です。マークダウンファイルからHTMLサイトを生成し、高速なビルドと豊富な機能が特徴です。</p>
+                
+                <div class="alert alert-info">
+                    <strong>Hugoの特徴:</strong>
+                    <ul>
+                        <li><strong>超高速ビルド</strong>: 数千ページでも数秒でビルド</li>
+                        <li><strong>プラグイン不要</strong>: 必要な機能がすべて内蔵</li>
+                        <li><strong>テーマシステム</strong>: 豊富なテーマとカスタマイズ性</li>
+                        <li><strong>多言語対応</strong>: 複数言語サイトの構築が簡単</li>
+                        <li><strong>ホットリロード</strong>: 開発中のリアルタイム更新</li>
+                    </ul>
+                </div>
+
+                <h3>1.2 静的サイトの利点</h3>
+                <h4>セキュリティ</h4>
+                <ul>
+                    <li>データベースがないためSQLインジェクション等の脅威がない</li>
+                    <li>サーバーサイドの処理がないため攻撃面が少ない</li>
+                </ul>
+
+                <h4>パフォーマンス</h4>
+                <ul>
+                    <li>事前生成されたHTMLファイルを配信するため高速</li>
+                    <li>CDNとの相性が抜群</li>
+                    <li>サーバー負荷が非常に軽い</li>
+                </ul>
+
+                <h4>コスト効率</h4>
+                <ul>
+                    <li>静的ファイルホスティングサービス（GitHub Pages、Netlifyなど）で無料運用可能</li>
+                    <li>サーバー管理コストが不要</li>
+                </ul>
+            </section>
+
+            <section id="installation" class="section">
+                <h2>2. インストールと初期設定</h2>
+                
+                <h3>2.1 Hugoのインストール</h3>
+                
+                <h4>Windows</h4>
+                <pre><code># Chocolateyを使用
+choco install hugo-extended
+
+# Scoopを使用
+scoop install hugo-extended</code></pre>
+
+                <h4>macOS</h4>
+                <pre><code># Homebrewを使用（推奨）
+brew install hugo</code></pre>
+
+                <h4>Linux (Ubuntu/Debian)</h4>
+                <pre><code># Snap（推奨）
+sudo snap install hugo
+
+# 手動インストール（最新版）
+wget https://github.com/gohugoio/hugo/releases/download/v0.xxx.x/hugo_extended_0.xxx.x_Linux-64bit.tar.gz</code></pre>
+
+                <div class="alert alert-warning">
+                    <strong>重要:</strong> <code>hugo-extended</code>版をインストールしてください。SCSS/SASSの処理に必要です。
+                </div>
+
+                <h3>2.2 新しいサイトの作成</h3>
+                <pre><code># 新しいサイトを作成
+hugo new site my-awesome-site
+
+# 作成されたディレクトリに移動
+cd my-awesome-site
+
+# 開発サーバーを起動
+hugo server</code></pre>
+            </section>
+
+            <section id="content" class="section">
+                <h2>3. contentフォルダ詳細解説</h2>
+                
+                <h3>3.1 コンテンツの基本構造</h3>
+                <pre><code>content/
+├── _index.md           # ホームページ
+├── about.md            # Aboutページ
+├── contact.md          # Contactページ
+├── posts/              # ブログ記事セクション
+│   ├── _index.md       # 記事一覧ページ
+│   ├── first-post.md
+│   └── second-post.md
+├── docs/               # ドキュメントセクション
+│   ├── _index.md
+│   ├── getting-started.md
+│   └── advanced/
+│       ├── _index.md
+│       └── configuration.md
+└── projects/           # プロジェクトセクション
+    ├── _index.md
+    ├── project-1.md
+    └── project-2.md</code></pre>
+
+                <h3>3.2 ページタイプの理解</h3>
+                <h4>Single Pages（個別ページ）</h4>
+                <ul>
+                    <li><code>about.md</code> → <code>/about/</code></li>
+                    <li><code>posts/first-post.md</code> → <code>/posts/first-post/</code></li>
+                </ul>
+
+                <h4>List Pages（一覧ページ）</h4>
+                <ul>
+                    <li><code>posts/_index.md</code> → <code>/posts/</code>（記事一覧）</li>
+                    <li><code>docs/_index.md</code> → <code>/docs/</code>（ドキュメント一覧）</li>
+                </ul>
+            </section>
+
+            <section id="layouts" class="section">
+                <h2>4. layoutsフォルダ詳細解説</h2>
+                
+                <h3>4.1 レイアウトの階層構造</h3>
+                <pre><code>layouts/
+├── _default/               # デフォルトテンプレート
+│   ├── baseof.html        # ベーステンプレート
+│   ├── single.html        # 個別ページ
+│   ├── list.html          # 一覧ページ
+│   └── index.html         # ホームページ
+├── partials/              # 部品テンプレート
+│   ├── head.html
+│   ├── header.html
+│   ├── footer.html
+│   └── sidebar.html
+├── shortcodes/            # ショートコード
+│   ├── youtube.html
+│   └── gallery.html
+├── posts/                 # 投稿用カスタムレイアウト
+│   ├── single.html
+│   └── list.html
+└── 404.html              # 404エラーページ</code></pre>
+
+                <h3>4.2 ベーステンプレート（baseof.html）</h3>
+                <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="{{ .Site.Language.Lang }}"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;
+        {{- if .IsHome }}
+            {{ .Site.Title }}
+        {{- else }}
+            {{ .Title }} | {{ .Site.Title }}
+        {{- end }}
+    &lt;/title&gt;
+    
+    {{- partial "head.html" . }}
+&lt;/head&gt;
+&lt;body&gt;
+    {{- partial "header.html" . }}
+    
+    &lt;main&gt;
+        {{- block "main" . }}
+        &lt;!-- デフォルトのコンテンツ --&gt;
+        {{- end }}
+    &lt;/main&gt;
+    
+    {{- partial "footer.html" . }}
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </section>
+
+            <section id="templates" class="section">
+                <h2>5. テンプレート入門</h2>
+                
+                <h3>5.1 Go Templateの基本文法</h3>
+                
+                <h4>変数の出力</h4>
+                <pre><code>&lt;!-- 基本的な変数出力 --&gt;
+{{ .Title }}
+{{ .Content }}
+{{ .Date }}
+
+&lt;!-- エスケープなしの出力（HTMLを含む場合） --&gt;
+{{ .Content | safeHTML }}
+
+&lt;!-- パイプ処理 --&gt;
+{{ .Title | upper }}
+{{ .Date.Format "2006-01-02" }}
+{{ .Content | truncate 100 }}</code></pre>
+
+                <h4>条件分岐</h4>
+                <pre><code>&lt;!-- if文 --&gt;
+{{- if .Params.featured }}
+&lt;div class="featured-post"&gt;特集記事&lt;/div&gt;
+{{- end }}
+
+&lt;!-- if-else文 --&gt;
+{{- if .Params.author }}
+&lt;span class="author"&gt;{{ .Params.author }}&lt;/span&gt;
+{{- else }}
+&lt;span class="author"&gt;Anonymous&lt;/span&gt;
+{{- end }}</code></pre>
+
+                <h4>ループ処理</h4>
+                <pre><code>&lt;!-- 基本のrange --&gt;
+{{- range .Pages }}
+&lt;h2&gt;&lt;a href="{{ .RelPermalink }}"&gt;{{ .Title }}&lt;/a&gt;&lt;/h2&gt;
+{{- end }}
+
+&lt;!-- 条件付きrange --&gt;
+{{- range where .Pages "Type" "post" }}
+&lt;article&gt;{{ .Title }}&lt;/article&gt;
+{{- end }}</code></pre>
+            </section>
+
+            <section id="frontmatter" class="section">
+                <h2>6. フロントマター完全ガイド</h2>
+                
+                <h3>6.1 フロントマターの基本</h3>
+                <p>フロントマターはコンテンツファイルの先頭に記述するメタデータです。YAML、TOML、JSONの形式で書けます。</p>
+
+                <h4>YAML形式（推奨）</h4>
+                <pre><code>---
+title: "Hugoの完全ガイド"
+date: 2023-12-01T10:00:00+09:00
+lastmod: 2023-12-15T15:30:00+09:00
+draft: false
+author: "田中太郎"
+description: "Hugoの使い方を初心者にも分かりやすく解説します"
+tags: ["Hugo", "静的サイト", "Web開発"]
+categories: ["チュートリアル"]
+featured_image: "/images/hugo-guide.jpg"
+---</code></pre>
+
+                <h3>6.2 標準フロントマター変数</h3>
+                <h4>必須・基本変数</h4>
+                <pre><code>---
+title: "記事のタイトル"                    # ページタイトル（必須）
+date: 2023-12-01T10:00:00+09:00           # 作成日時（必須）
+draft: false                              # 下書きフラグ
+---</code></pre>
+
+                <h4>SEO関連</h4>
+                <pre><code>---
+title: "ページタイトル"
+description: "ページの説明文。検索結果に表示されます。"
+keywords: ["キーワード1", "キーワード2"]
+slug: "custom-url-slug"                   # URLのカスタマイズ
+url: "/custom/path/"                      # 完全なURLパス指定
+aliases: ["/old-url/", "/another-old-url/"] # リダイレクト設定
+---</code></pre>
+            </section>
+
+            <section id="config" class="section">
+                <h2>7. Hugo設定ファイル詳解</h2>
+                
+                <h3>7.1 基本設定（hugo.toml）</h3>
+                <pre><code># サイトの基本設定
+baseURL = "https://example.com"
+languageCode = "ja"
+title = "My Awesome Site"
+theme = "my-theme"
+
+# ビルド設定
+publishDir = "public"
+buildDrafts = false
+buildFuture = false
+buildExpired = false</code></pre>
+
+                <h3>7.2 多言語設定</h3>
+                <pre><code>defaultContentLanguage = "ja"
+defaultContentLanguageInSubdir = true
+
+[languages]
+  [languages.ja]
+    title = "私のサイト"
+    weight = 1
+    contentDir = "content/ja"
+    languageName = "日本語"
+    [languages.ja.params]
+      description = "日本語サイトの説明"
+
+  [languages.en]
+    title = "My Site"
+    weight = 2
+    contentDir = "content/en"
+    languageName = "English"
+    [languages.en.params]
+      description = "English site description"</code></pre>
+            </section>
+
+            <section id="themes" class="section">
+                <h2>8. テーマの使い方とカスタマイズ</h2>
+                
+                <h3>8.1 テーマの基本的な使い方</h3>
+                <h4>テーマのインストール</h4>
+                <pre><code># Gitサブモジュールとして追加（推奨）
+git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke
+
+# 設定ファイルでのテーマ指定
+theme = "ananke"</code></pre>
+
+                <h3>8.2 人気のHugoテーマ</h3>
+                <div class="alert alert-info">
+                    <strong>ブログ向けテーマ</strong>
+                    <ul>
+                        <li><strong>PaperMod</strong>: シンプルで高速、カスタマイズしやすい</li>
+                        <li><strong>Hugo-theme-stack</strong>: モダンなデザイン、豊富な機能</li>
+                        <li><strong>Hermit</strong>: ミニマルデザイン、コードブロックが美しい</li>
+                        <li><strong>Terminal</strong>: ターミナル風のユニークなデザイン</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="pipes" class="section">
+                <h2>9. Hugo Pipesとアセット管理</h2>
+                
+                <h3>9.1 Hugo Pipesの概要</h3>
+                <p>Hugo Pipesは、CSS、JavaScript、画像などのアセットを処理・最適化するHugo内蔵の機能です。</p>
+
+                <h4>基本的な使用方法</h4>
+                <pre><code>&lt;!-- layouts/partials/head.html --&gt;
+{{- $style := resources.Get "scss/main.scss" | toCSS | minify | fingerprint }}
+&lt;link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}"&gt;
+
+{{- $script := resources.Get "js/main.js" | minify | fingerprint }}
+&lt;script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"&gt;&lt;/script&gt;</code></pre>
+
+                <h3>9.2 画像処理</h3>
+                <pre><code>&lt;!-- 画像のリサイズと最適化 --&gt;
+{{- $image := resources.Get "images/hero.jpg" }}
+{{- $resized := $image.Resize "800x600 q85" }}
+&lt;img src="{{ $resized.RelPermalink }}" alt="Hero image" width="800" height="600"&gt;</code></pre>
+            </section>
+
+            <section id="shortcodes" class="section">
+                <h2>10. ショートコード活用術</h2>
+                
+                <h3>10.1 ショートコードの基本</h3>
+                <p>ショートコードは、マークダウンの中で再利用可能なHTMLコンポーネントを呼び出す仕組みです。</p>
+
+                <h4>基本的な使用方法</h4>
+                <pre><code>&lt;!-- パラメーター付きショートコード --&gt;
+{{&lt; youtube "dQw4w9WgXcQ" &gt;}}
+
+&lt;!-- ペアショートコード --&gt;
+{{&lt; highlight javascript &gt;}}
+function hello() {
+  console.log("Hello, World!");
+}
+{{&lt; /highlight &gt;}}
+
+&lt;!-- 名前付きパラメーター --&gt;
+{{&lt; figure src="image.jpg" title="画像のタイトル" caption="キャプション" &gt;}}</code></pre>
+
+                <h3>10.2 カスタムショートコードの作成</h3>
+                <pre><code>&lt;!-- layouts/shortcodes/button.html --&gt;
+{{- $url := .Get "url" | default "#" }}
+{{- $text := .Get "text" | default "ボタン" }}
+{{- $class := .Get "class" | default "btn btn-primary" }}
+
+&lt;a href="{{ $url }}" class="{{ $class }}"&gt;
+    {{ $text }}
+&lt;/a&gt;</code></pre>
+            </section>
+
+            <section id="multilingual" class="section">
+                <h2>11. 多言語サイト構築</h2>
+                
+                <h3>11.1 多言語設定の基本</h3>
+                <pre><code># hugo.toml
+defaultContentLanguage = "ja"
+defaultContentLanguageInSubdir = true
+
+[languages]
+  [languages.ja]
+    title = "私のウェブサイト"
+    weight = 1
+    contentDir = "content/ja"
+    languageName = "日本語"
+    languageCode = "ja-JP"
+
+  [languages.en]
+    title = "My Website"
+    weight = 2
+    contentDir = "content/en"
+    languageName = "English"
+    languageCode = "en-US"</code></pre>
+
+                <h3>11.2 コンテンツ構造</h3>
+                <pre><code>content/
+├── ja/
+│   ├── _index.md
+│   ├── about.md
+│   └── posts/
+│       ├── _index.md
+│       └── hugo-tutorial.md
+├── en/
+│   ├── _index.md
+│   ├── about.md
+│   └── posts/
+│       ├── _index.md
+│       └── hugo-tutorial.md</code></pre>
+            </section>
+
+            <section id="seo" class="section">
+                <h2>12. SEO最適化</h2>
+                
+                <h3>12.1 基本的なSEO設定</h3>
+                <pre><code>&lt;!-- layouts/partials/seo.html --&gt;
+{{- $title := .Title }}
+{{- $description := .Description | default .Summary | default .Site.Params.description }}
+
+&lt;title&gt;
+{{- if .IsHome }}
+    {{ .Site.Title }} | {{ .Site.Params.description }}
+{{- else }}
+    {{ $title }} | {{ .Site.Title }}
+{{- end }}
+&lt;/title&gt;
+
+&lt;meta name="description" content="{{ $description | truncate 160 }}"&gt;
+&lt;link rel="canonical" href="{{ .Permalink }}"&gt;
+
+&lt;!-- Open Graph --&gt;
+&lt;meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}"&gt;
+&lt;meta property="og:title" content="{{ $title }}"&gt;
+&lt;meta property="og:description" content="{{ $description | truncate 300 }}"&gt;</code></pre>
+
+                <h3>12.2 構造化データ（JSON-LD）</h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "{{ .Site.Title }}",
+  "url": "{{ .Site.BaseURL }}",
+  "description": "{{ .Site.Params.description }}"
+}
+&lt;/script&gt;</code></pre>
+            </section>
+
+            <section id="deployment" class="section">
+                <h2>13. デプロイとホスティング</h2>
+                
+                <h3>13.1 GitHub Pagesデプロイ</h3>
+                <pre><code># .github/workflows/gh-pages.yml
+name: GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.120.0'
+          extended: true
+
+      - name: Build
+        run: hugo --minify
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public</code></pre>
+
+                <h3>13.2 Netlifyデプロイ</h3>
+                <pre><code># netlify.toml
+[build]
+  publish = "public"
+  command = "hugo --gc --minify"
+
+[build.environment]
+  HUGO_VERSION = "0.120.0"
+  HUGO_ENV = "production"</code></pre>
+            </section>
+
+            <section id="performance" class="section">
+                <h2>14. パフォーマンス最適化</h2>
+                
+                <h3>14.1 ビルド最適化</h3>
+                <pre><code># hugo.toml
+[build]
+  writeStats = true
+  
+[caches]
+  [caches.images]
+    dir = ":resourceDir/_gen"
+    maxAge = "24h"
+  [caches.assets]
+    dir = ":resourceDir/_gen"
+    maxAge = "24h"
+
+[minify]
+  disableCSS = false
+  disableHTML = false
+  disableJS = false</code></pre>
+
+                <h3>14.2 画像最適化</h3>
+                <pre><code>&lt;!-- レスポンシブ画像 --&gt;
+{{- $image := resources.Get "images/photo.jpg" }}
+{{- $small := $image.Resize "400x q85" }}
+{{- $medium := $image.Resize "800x q85" }}
+{{- $large := $image.Resize "1200x q85" }}
+
+&lt;picture&gt;
+    &lt;source media="(max-width: 599px)" srcset="{{ $small.RelPermalink }}"&gt;
+    &lt;source media="(max-width: 999px)" srcset="{{ $medium.RelPermalink }}"&gt;
+    &lt;img src="{{ $large.RelPermalink }}" alt="Responsive image"&gt;
+&lt;/picture&gt;</code></pre>
+            </section>
+
+            <section id="troubleshooting" class="section">
+                <h2>15. トラブルシューティング</h2>
+                
+                <h3>15.1 よくある問題と解決方法</h3>
+                
+                <h4>ビルドエラーの診断</h4>
+                <pre><code># 詳細なエラー情報を表示
+hugo --verbose --debug
+
+# テンプレートの構文チェック
+hugo --templateMetrics --templateMetricsHints
+
+# キャッシュのクリア
+hugo --gc
+rm -rf resources/_gen/</code></pre>
+
+                <h4>設定ファイルの問題</h4>
+                <div class="alert alert-warning">
+                    <strong>よくある設定エラー:</strong>
+                    <ul>
+                        <li>TOML/YAML/JSONの構文エラー</li>
+                        <li>baseURLの設定ミス</li>
+                        <li>テーマパスの間違い</li>
+                        <li>言語設定の不備</li>
+                    </ul>
+                </div>
+
+                <h3>15.2 パフォーマンス問題の診断</h3>
+                <pre><code># ビルド統計の有効化
+hugo --templateMetrics --templateMetricsHints
+
+# メモリ使用量の監視
+hugo --memstats /tmp/hugo-memstats</code></pre>
+
+                <h3>15.3 デバッグツール</h3>
+                <pre><code>&lt;!-- テンプレート内でのデバッグ --&gt;
+{{- if .Site.Params.debug }}
+{{ printf "%#v" . }}
+{{ end }}
+
+&lt;!-- 変数の確認 --&gt;
+{{ range $key, $value := .Params }}
+{{ printf "%s: %v" $key $value }}
+{{ end }}</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>🎯 まとめ</h2>
+                
+                <p>このHugo完全ガイドでは、Hugoの基本的な概念から高度な使用方法まで、包括的に解説しました。</p>
+                
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>🎓 学習の進め方</h3>
+                        <ol>
+                            <li><strong>基礎固め</strong>: フォルダ構造とテンプレートシステムを理解</li>
+                            <li><strong>実践</strong>: 小さなサイトを作成して基本機能を習得</li>
+                            <li><strong>カスタマイズ</strong>: テーマのカスタマイズとオリジナル機能の追加</li>
+                            <li><strong>最適化</strong>: パフォーマンスとSEOの向上</li>
+                            <li><strong>運用</strong>: デプロイとメンテナンスの自動化</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>💡 重要なポイント</h3>
+                        <ul>
+                            <li><strong>ファイル構造の理解</strong>: Hugoの規約に従った適切なファイル配置</li>
+                            <li><strong>テンプレート階層</strong>: 効率的なテンプレート設計</li>
+                            <li><strong>パフォーマンス</strong>: 高速なサイト構築のための最適化</li>
+                            <li><strong>SEO対応</strong>: 検索エンジンに優しいサイト構築</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <strong>🚀 次のステップ</strong>
+                    <p>Hugoは学習コストが比較的低く、高いパフォーマンスを実現できる優れた静的サイトジェネレーターです。このガイドを参考に、ぜひ素晴らしいウェブサイトを構築してください。</p>
+                </div>
+
+                <h3>📚 参考資源</h3>
+                <ul>
+                    <li><a href="https://gohugo.io/documentation/" target="_blank">Hugo公式ドキュメント</a></li>
+                    <li><a href="https://discourse.gohugo.io/" target="_blank">Hugo公式フォーラム</a></li>
+                    <li><a href="https://github.com/gohugoio/hugo" target="_blank">Hugo GitHub リポジトリ</a></li>
+                    <li><a href="https://themes.gohugo.io/" target="_blank">Hugo テーマ集</a></li>
+                </ul>
+
+                <p><strong>継続的な学習と実践を通じて、Hugoを最大限に活用してください！</strong></p>
+            </section>
+        </main>
+    </div>
+
+    <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // サイドバーの開閉
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // セクションへのスクロール
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+                
+                // モバイルでサイドバーを閉じる
+                if (window.innerWidth <= 768) {
+                    const sidebar = document.getElementById('sidebar');
+                    sidebar.classList.remove('open');
+                }
+                
+                // アクティブリンクを更新
+                updateActiveLink(sectionId);
+            }
+        }
+
+        // アクティブリンクの更新
+        function updateActiveLink(activeId) {
+            const links = document.querySelectorAll('.toc a');
+            links.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + activeId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // トップへ戻る
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // スクロール時の処理
+        window.addEventListener('scroll', function() {
+            const backToTop = document.querySelector('.back-to-top');
+            
+            // バックトップボタンの表示/非表示
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+
+            // アクティブセクションの検出
+            const sections = document.querySelectorAll('.section');
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 100 && rect.bottom >= 100) {
+                    currentSection = section.id;
+                }
+            });
+            
+            if (currentSection) {
+                updateActiveLink(currentSection);
+            }
+        });
+
+        // モバイル対応: サイドバー外クリックで閉じる
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggle.contains(event.target) &&
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            // フェードインアニメーションの適用
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // リサイズ時の処理
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>
